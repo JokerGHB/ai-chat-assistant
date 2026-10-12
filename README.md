@@ -1,4 +1,4 @@
-# 拾光 AI 聊天
+# 乙甲 AI 聊天
 
 本地运行的 AI 聊天示例，前端使用 Vue 3 + Vite，后端使用 Spring Boot + MyBatis，数据保存在 MySQL。
 
