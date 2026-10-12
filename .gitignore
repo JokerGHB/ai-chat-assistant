@@ -1,0 +1,24 @@
+# Local secrets and machine-specific configuration
+.env
+.env.*
+!.env.example
+**/application-local.properties
+**/application-secret.properties
+
+# Frontend generated files
+front/node_modules/
+front/dist/
+front/.vite/
+npm-debug.log*
+
+# Backend and IDE generated files
+end/end/target/
+end/end/.idea/
+end/end/effective-pom
+end/end/*.log
+end/end/.git/
+end/end/.git.previous/
+*.iml
+.idea/
+*.class
+
