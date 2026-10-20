@@ -11,6 +11,8 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,14 +23,21 @@ public class DeepSeekClient {
     private final RestClient restClient;
     private final String apiKey;
     private final String model;
+    /** token 单价（元/千 token），用于计算每次调用的成本写入 chat_message.cost */
+    private final BigDecimal promptPricePer1k;
+    private final BigDecimal completionPricePer1k;
 
     public DeepSeekClient(
             @Value("${deepseek.base-url}") String baseUrl,
             @Value("${deepseek.api-key:}") String apiKey,
-            @Value("${deepseek.model}") String model) {
+            @Value("${deepseek.model}") String model,
+            @Value("${deepseek.prompt-price-per-1k:0}") BigDecimal promptPricePer1k,
+            @Value("${deepseek.completion-price-per-1k:0}") BigDecimal completionPricePer1k) {
         this.restClient = RestClient.builder().baseUrl(baseUrl).build();
         this.apiKey = apiKey;
         this.model = model;
+        this.promptPricePer1k = promptPricePer1k;
+        this.completionPricePer1k = completionPricePer1k;
     }
 
     public AiReply generateReply(List<ChatMessage> history) {
@@ -90,13 +99,29 @@ public class DeepSeekClient {
             promptTokens = numberValue(usage.get("prompt_tokens"));
             completionTokens = numberValue(usage.get("completion_tokens"));
         }
-        return new AiReply(text, promptTokens, completionTokens);
+        return new AiReply(text, promptTokens, completionTokens, calculateCost(promptTokens, completionTokens));
+    }
+
+    /** 按配置的单价计算本次调用成本（元），token 数缺失时返回 null */
+    private BigDecimal calculateCost(Integer promptTokens, Integer completionTokens) {
+        if (promptTokens == null && completionTokens == null) {
+            return null;
+        }
+        BigDecimal thousand = new BigDecimal("1000");
+        BigDecimal cost = BigDecimal.ZERO;
+        if (promptTokens != null) {
+            cost = cost.add(promptPricePer1k.multiply(new BigDecimal(promptTokens)).divide(thousand, 6, RoundingMode.HALF_UP));
+        }
+        if (completionTokens != null) {
+            cost = cost.add(completionPricePer1k.multiply(new BigDecimal(completionTokens)).divide(thousand, 6, RoundingMode.HALF_UP));
+        }
+        return cost;
     }
 
     private Integer numberValue(Object value) {
         return value instanceof Number number ? number.intValue() : null;
     }
 
-    public record AiReply(String content, Integer promptTokens, Integer completionTokens) {
+    public record AiReply(String content, Integer promptTokens, Integer completionTokens, BigDecimal cost) {
     }
 }

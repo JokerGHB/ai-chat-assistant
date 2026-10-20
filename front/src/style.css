@@ -10,3 +10,13 @@
 .help-list{display:grid;gap:1px}.help-list p{margin:0;padding:12px 0;border-top:1px solid #f1eff3;display:grid;gap:4px}.help-list strong{font-size:10px;font-weight:600;color:#504c58}.help-list span{font-size:9px;color:#9995a0}.toast-message{position:fixed;z-index:20;left:50%;bottom:88px;transform:translateX(-50%);border:1px solid #e9e6ee;border-radius:10px;background:#302d37;color:#fff;padding:10px 15px;box-shadow:0 8px 30px #201a2a25;font-size:10px;white-space:nowrap}.toast-enter-active,.toast-leave-active{transition:opacity .16s,transform .16s}.toast-enter-from,.toast-leave-to{opacity:0;transform:translate(-50%,6px)}
 @media(max-width:760px){.sidebar{width:228px;flex-basis:228px}.topbar{padding:0 16px}.welcome-wrap{width:calc(100% - 40px)}.welcome-wrap h1{font-size:23px}.suggestion-grid{gap:7px}.suggestion-card{padding:0 8px;gap:7px}.suggestion-card small{font-size:8px}.messages-wrap,.composer-area{width:calc(100% - 36px)}}
 @media(max-width:560px){.sidebar{position:absolute;z-index:4;inset:0 auto 0 0;width:min(284px,84vw);box-shadow:12px 0 35px #21193114}.sidebar-scrim{display:block;position:fixed;z-index:3;inset:0;width:100%;height:100%;border:0;background:#201a2a42}.context-title,.crumb-divider{display:none}.topbar{padding:0 12px}.topbar-right{gap:3px}.share-button{font-size:9px}.welcome-wrap{top:43%;width:calc(100% - 34px)}.welcome-wrap h1{font-size:21px}.welcome-subtitle{font-size:11px}.suggestion-grid{grid-template-columns:1fr}.suggestion-card{height:53px}.suggestion-icon{width:27px;height:27px;flex-basis:27px}.suggestion-card small{font-size:9px}.composer-area{width:calc(100% - 24px)}.messages-wrap{width:calc(100% - 28px);gap:20px}.composer-hint{font-size:8px}}
+/* ===== 多用户改造新增 ===== */
+.model-static{display:flex;align-items:center;gap:7px;color:#302d36;font-size:12px;font-weight:600}
+.remaining-badge{border:1px solid #eeedf0;border-radius:20px;background:#faf9fc;color:#77717f;padding:4px 10px;font-size:10px;white-space:nowrap}
+.profile-row-wrap{display:flex;align-items:center;gap:4px}
+.profile-row-wrap .profile-row{flex:1;min-width:0}
+.logout-button{flex:0 0 auto;width:30px;height:30px}
+.logout-button:hover{color:#c85c63}
+.message.failed .assistant-avatar{background:#fdeeee;color:#c85c63}
+.message.failed .message-text{color:#a15b62}
+.failed-hint{margin:6px 0 0;font-size:9px;color:#c85c63}

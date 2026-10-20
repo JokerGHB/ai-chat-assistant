@@ -19,6 +19,24 @@ public class ApiExceptionHandler {
         return response(HttpStatus.NOT_FOUND, exception.getMessage(), request);
     }
 
+    /** 未认证（token 缺失/过期/封禁）→ 401，前端统一跳登录页 */
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ApiError> handleUnauthorized(UnauthorizedException exception, HttpServletRequest request) {
+        return response(HttpStatus.UNAUTHORIZED, exception.getMessage(), request);
+    }
+
+    /** 已登录但权限不足（如普通用户访问管理接口）→ 403 */
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiError> handleForbidden(ForbiddenException exception, HttpServletRequest request) {
+        return response(HttpStatus.FORBIDDEN, exception.getMessage(), request);
+    }
+
+    /** 次数超限（如超出每日对话上限）→ 429 */
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity<ApiError> handleTooManyRequests(TooManyRequestsException exception, HttpServletRequest request) {
+        return response(HttpStatus.TOO_MANY_REQUESTS, exception.getMessage(), request);
+    }
+
     @ExceptionHandler(AiServiceException.class)
     public ResponseEntity<ApiError> handleAiService(AiServiceException exception, HttpServletRequest request) {
         return response(exception.getStatus(), exception.getMessage(), request);
