@@ -1,0 +1,77 @@
+== PAGE 1 mediabox w=595.3 h=841.9
+y= 802.4 x=  283-303 sz=[180.0] font=['/YMVEVT+MicrosoftYaHei'] | — 1 —
+y= 748.9 x=   57-126 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 供 HTTP Web 服务，实现缓存、会话持久化，公网可直接访问使用。
+y= 730.9 x=   57-380 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | ・容器化工程云部署：基于 Docker Compose 完成应用、Redis 编排，部署至阿里云云服务器，对外提
+y= 710.7 x=   57-329 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 个维度对报告自动打分；接入 Langfuse 做全链路调用观测。
+y= 692.7 x=   57-532 sz=[209.0] font=['/VULAQV+SegoeUI', '/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | • 完整评测与观测体系：实现 LLM‑ as‑ a‑ Judge 评测，从可溯源性、冲突处理、相关性、覆盖度 4
+y= 672.8 x=   57-340 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 取；适配 stdio 协议，可直接接入 Cursor、Claude Desktop。
+y= 654.8 x=   57-346 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | • MCP 标准化工具封装：基于 FastMCP 封装 3 个异步 MCP 工具，支持任务提交、进度查询、结果拉
+y= 634.7 x=    57-57 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 据出现数值冲突时做分歧标注，不会强行合并掩盖矛盾。
+y= 616.7 x=   57-486 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 靠代码约束而非单纯 Prompt 保证输出格式；每条提取的数据强制绑定原文摘录与来源 URL；多来源数
+y= 598.7 x=   57-370 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | • 强类型约束抑制幻觉：使用 Pydantic v2 定义结构化输出 Schema，强制数字字段使用纯数值类型，依
+y= 578.7 x=    57-57 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 结果落盘持久化，评测可复用历史结果避免重复调用大模型与搜索接口。
+y= 560.7 x=   57-180 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | Judge 评测使用 max 模型；通过控制搜索返回条数、输入文本长度、失败重试策略控制调用成本，调研
+y= 542.7 x=   57-528 sz=[209.0] font=['/VULAQV+SegoeUI', '/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | • 模型分级调度：任务规划、信息抽取使 flash 轻量模型；数据分析使用 plus 模型；LLM‑ as‑ a‑
+y= 522.6 x=    57-57 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 信息抽取；仅在汇聚节点更新全局状态，规避并行分支状态写入冲突。
+y= 504.6 x=   57-188 sz=[209.0] font=['/VULAQV+SegoeUI', '/YMVEVT+MicrosoftYaHei'] | 实现 Map‑ Reduce‑ Map 两级并行；先并行执行子任务搜索，汇聚全局去重后，再对每条来源并行做
+y= 486.6 x=   57-522 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | • 多 Agent 分工流水线：划分规划、搜索、抽取、分析四类独立 Agent，借助 LangGraph Send API
+y= 466.6 x=   57-327 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 标准 MCP 工具，可接入 Claude Desktop、Cursor 等 AI 客户端。
+y= 448.6 x=   57-433 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 信息抽取、交叉验证分析，输出带来源溯源、冲突数据标注的结构化 Markdown 调研报告；系统封装为
+y= 430.6 x=   57-209 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 基于 LangGraph 实现多 Agent 流水线调研系统，输入调研主题，自动完成任务规划、联网搜索、网页
+y= 411.3 x=   57-347 sz=[180.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | 技术栈：LangGraph / 阿里云百炼 Qwen 分级模型 / FastMCP / redis / Sqlite
+y= 394.2 x=    57-57 sz=[161.0] font=['/YMVEVT+MicrosoftYaHei'] | https://github.com/JokerGHB/subagent
+y= 378.2 x=   57-503 sz=[209.0, 221.0] font=['/YWSWBG+MicrosoftYaHei-Bold'] | 多 Agent 自动化调研分析系统 2026.6 - 2026.9
+y= 352.9 x=    57-57 sz=[240.0] font=['/YWSWBG+MicrosoftYaHei-Bold'] | 项目经历
+y= 327.1 x=   57-198 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 算机网络、数据库原理、WEB 前端开发技术
+y= 308.9 x=   57-369 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | 主修课程：Python 程序设计、Linux 编程、C 语言程序设计、Java 语言程序设计、数据结构与算法、计
+y= 287.0 x=   57-488 sz=[180.0, 209.0] font=['/YMVEVT+MicrosoftYaHei'] | 2023.09 — 2027.07 专业排名: 6/36
+y= 265.7 x=   57-138 sz=[209.0, 221.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | 南京工程学院 | 网络工程（本科）
+y= 240.3 x=    57-57 sz=[240.0] font=['/YWSWBG+MicrosoftYaHei-Bold'] | 教育背景
+y= 214.5 x=   57-247 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 出及 Docker 部署，深耕 RAG 与 Agent 工程优化、幻觉抑制和成本控制。
+y= 196.5 x=   57-507 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | Agent、多 Agent 自动化调研系统；掌握向量检索、Reranker、多工具编排、MCP 封装、SSE 流式输
+y= 178.5 x=   57-494 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 网络工程大四，熟悉 Python 后端与大模型应用开发。独立实现 RAG 问答、LangGraph 智能客服
+y= 153.8 x=    57-57 sz=[240.0] font=['/YWSWBG+MicrosoftYaHei-Bold'] | 个人简介
+y= 128.6 x=  148-352 sz=[180.0] font=['/YMVEVT+MicrosoftYaHei'] | 136-1399-9293 | m15038715470@163.com | github.com/JokerGHB
+y= 108.2 x=  238-344 sz=[221.0] font=['/YMVEVT+MicrosoftYaHei'] | 姓名：李一甲 年龄：21
+y=  83.2 x=  214-321 sz=[401.0] font=['/YWSWBG+MicrosoftYaHei-Bold'] | AI 应用开发工程师
+y=  46.7 x=   57-104 sz=[180.0] font=['/YMVEVT+MicrosoftYaHei'] | 李一甲 · AI/大模型实习生
+== PAGE 2 mediabox w=595.3 h=841.9
+y= 802.4 x=  283-303 sz=[180.0] font=['/YMVEVT+MicrosoftYaHei'] | — 2 —
+y= 777.8 x=   66-197 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | • 大学英语四级证书（CET-4）
+y= 757.9 x=    66-73 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | • 校二等奖学金
+y= 737.8 x=   66-280 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | • 蓝桥杯全国软件和信息技术专业人才大赛 — 省级二等奖
+y= 713.1 x=    57-57 sz=[240.0] font=['/YWSWBG+MicrosoftYaHei-Bold'] | 荣誉证书
+y= 687.2 x=   57-314 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | 开发工具：Claude Code / Vibe Coding / Cursor / AI 辅助编程
+y= 667.2 x=   57-352 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | 开发运维：Docker / docker-compose / Linux / Git / GitHub CI
+y= 647.1 x=   57-318 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | 后端与数据库：FastAPI / Streamlit / Redis / MySQL / SQLite
+y= 627.2 x=   57-394 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | AI/大模型：LangChain / LangGraph / RAG / Agent / MCP / Prompt Engineering
+y= 607.1 x=   57-280 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | 编程语言：Python / JavaScript / TypeScript / Java
+y= 582.4 x=    57-57 sz=[240.0] font=['/YWSWBG+MicrosoftYaHei-Bold'] | 技能清单
+y= 556.5 x=   75-250 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 成静态代码检查、单元测试、Docker 镜像自动构建；容器化部署，接口异常具备降级容错逻辑。
+y= 538.5 x=   66-528 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | • 工程与 CI：日志输出记录意图识别、工具调用、检索各阶段耗时，方便定位失败案例；GitHub CI 完
+y= 518.6 x=    75-75 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 复；数据库存储长期记忆，支持跨会话复用用户关键信息
+y= 500.4 x=   66-463 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | • 分层会话记忆体系：基于 LangGraph Checkpoint 持久化会话状态，支持 Agent 任务中断断点恢
+y= 480.5 x=   75-137 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 分钟）；TTL 随机抖动防雪崩，故障自动降级并日志告警
+y= 462.5 x=   66-534 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | • Redis 缓存：会话读缓存（TTL 5-30s）、路由分类缓存（TTL 86400s）、IP 滑动窗口限流（30 次/
+y= 442.5 x=   75-400 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 全量日志监控、会话上下文隔离，工具调用准确率由 43% 提升至 91%。
+y= 424.5 x=   75-465 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 文；循环检测中间件识别死循环风险；三层校验中间件：输入守卫抵御间接 Prompt 注入、工具调用
+y= 406.5 x=   66-401 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | • Agent 安全防护体系：递归轮次上限限制防止无限推理；两级 Token 阈值检测，超限自动压缩上下
+y= 386.4 x=   75-319 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | offset 偏移量实现断线重连与断点续传，缓冲区 TTL 兜底防止内存泄漏
+y= 368.4 x=   66-430 sz=[209.0] font=['/VULAQV+SegoeUI', '/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | • SSE 流式输出：基于 text/event‑ stream 逐 token 推送，通过 stream_id 标识单次生成流，配合
+y= 348.4 x=   75-391 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 快速回复，服务类走 Agent 路径；RAG 返回空时自动降级到 Agent，避免死板回答
+y= 330.4 x=   66-517 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | • 双路径自动路由：前端 LLM 按意图分类（knowledge / service / greeting），知识类走 RAG 直答
+y= 310.4 x=   75-396 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | Reranker 精排 5 条，Hit Rate 提升 10%+，减少噪音片段进入 LLM 上下文
+y= 292.4 x=   66-406 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | • BM25 + BGE Reranker 双阶段精排：向量库粗召回 10 条，BM25 关键词检索补充实体召回，
+y= 272.4 x=    75-75 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 题构建父子块，解决切片语义割裂问题，结构化文档异常自动回退平铺切分。
+y= 254.4 x=   75-241 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 页与噪声行，过滤 30% 无效内容，保留页码元数据实现回答溯源；实现语义分层切片，识别章节标
+y= 236.3 x=   66-316 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | • PDF 清洗预处理流水线：基于 PyMuPDF/OpenCV 实现文档清洗，自动过滤水印、页眉页脚、空白
+y= 216.3 x=    75-75 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 多步推理
+y= 198.3 x=   75-410 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 8 个业务工具（信息查询 / 预约管理 / 进度查询 / 资源排班等），RAG 知识库封装为工具之一实现
+y= 180.3 x=   66-518 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | • LangGraph 构建 React Agent：配置 Checkpoint 持久化会话状态，支持任务中断断点恢复；编排
+y= 160.4 x=   57-338 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 理、检索增强、Agent 编排、安全防护、缓存限流、容器 CI 部署全链路。
+y= 142.2 x=   57-401 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 域的智能问答 & 客服系统，支持知识库问答、多步骤业务工具调用、SSE 流式对话，完整覆盖文档预处
+y= 124.2 x=   57-443 sz=[209.0] font=['/YMVEVT+MicrosoftYaHei'] | 基于 RAG 知识库底座，迭代扩展 LangGraph 多工具 Agent 能力，打造可适配 IT、金融、法律等多领
+y= 104.9 x=   57-519 sz=[180.0] font=['/YMVEVT+MicrosoftYaHei', '/YWSWBG+MicrosoftYaHei-Bold'] | 技术栈：FastAPI / LangChain / LangGraph / ChromaDB / BGE Reranker / 通义千问 / Redis / Docker / GitHub CI
+y=  88.0 x=    57-57 sz=[161.0] font=['/YMVEVT+MicrosoftYaHei'] | github.com/JokerGHB/ai-customer-agent
+y=  71.9 x=   57-492 sz=[209.0, 221.0] font=['/UDUJXM+SegoeUI-Bold', '/YWSWBG+MicrosoftYaHei-Bold'] | RAG‑ Agent 智能客服问答系统 2026.4 - 2026.6
+y=  46.7 x=   57-104 sz=[180.0] font=['/YMVEVT+MicrosoftYaHei'] | 李一甲 · AI/大模型实习生

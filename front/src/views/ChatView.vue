@@ -2,7 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import {
-  ArrowUp, CircleHelp, Command, Copy, Ellipsis, FileText, LogOut,
+  ArrowUp, BarChart3, CircleHelp, Command, Copy, Ellipsis, FileText, LogOut,
   Menu, MessageSquare, PanelLeftClose, Plus, RefreshCw, Search, Settings2,
   Sparkles, SquarePen, Sun, Trash2, X
 } from '@lucide/vue'
@@ -21,6 +21,7 @@ const searchText = ref('')
 const sidebarOpen = ref(true)
 const showSettings = ref(false)
 const showHelp = ref(false)
+const settingsTab = ref('workspace') // 'workspace' | 'account'
 const sending = ref(false)
 const attachedFiles = ref([])
 const toastMessage = ref('')
@@ -92,6 +93,43 @@ async function logout() {
   }
   clearAuth()
   router.push('/login')
+}
+
+// ========== 账号设置 ==========
+const editUsername = ref('')
+const editOldPassword = ref('')
+const editNewPassword = ref('')
+const editConfirmPassword = ref('')
+
+async function submitUsername() {
+  const name = editUsername.value.trim()
+  if (!name) return showToast('新用户名不能为空')
+  if (name === currentUser.value?.username) { showToast('新用户名与当前相同'); return }
+  try {
+    await api('/api/auth/username', { method: 'PATCH', body: JSON.stringify({ username: name }) })
+    showToast('用户名已修改，请重新登录')
+    // 修改用户名后后端会删除所有令牌强制重登
+    await logout()
+  } catch (error) {
+    showToast(`修改失败：${error.message}`)
+  }
+}
+
+async function submitPassword() {
+  if (!editOldPassword.value) return showToast('请输入旧密码')
+  if (!editNewPassword.value) return showToast('请输入新密码')
+  if (editNewPassword.value !== editConfirmPassword.value) return showToast('两次输入的新密码不一致')
+  try {
+    await api('/api/auth/password', {
+      method: 'PATCH',
+      body: JSON.stringify({ oldPassword: editOldPassword.value, newPassword: editNewPassword.value })
+    })
+    showToast('密码已修改，请重新登录')
+    editOldPassword.value = editNewPassword.value = editConfirmPassword.value = ''
+    await logout()
+  } catch (error) {
+    showToast(`修改失败：${error.message}`)
+  }
 }
 
 function focusComposer() {
@@ -300,6 +338,12 @@ watch(activeId, () => nextTick(() => { if (chatBody.value) chatBody.value.scroll
         <button class="icon-button subtle" aria-label="收起侧边栏" @click="sidebarOpen = false"><PanelLeftClose :size="18" /></button>
       </div>
 
+      <div v-if="currentUser?.role === 'admin'" class="sidebar-admin-entry">
+        <button class="admin-entry-btn" @click="router.push('/admin')">
+          <BarChart3 :size="15" /><span>管理后台</span>
+        </button>
+      </div>
+
       <div class="sidebar-actions">
         <button class="new-chat-btn" @click="newChat"><SquarePen :size="16" /><span>新建对话</span><kbd>Ctrl K</kbd></button>
         <label class="search-box"><Search :size="16" /><input ref="searchInput" v-model="searchText" placeholder="搜索对话" /><kbd>Ctrl F</kbd></label>
@@ -405,9 +449,59 @@ watch(activeId, () => nextTick(() => { if (chatBody.value) chatBody.value.scroll
     <div v-if="showSettings" class="modal-backdrop" @click.self="showSettings = false">
       <section class="settings-modal">
         <div class="modal-heading"><div><p class="eyebrow">偏好设置</p><h2>工作区设置</h2></div><button class="icon-button" @click="showSettings = false"><X :size="18" /></button></div>
-        <div class="setting-item"><div><strong>当前模型</strong><small>通过后端调用国产 DeepSeek 模型</small></div><span class="setting-value">DeepSeek Flash</span></div>
-        <div class="setting-item"><div><strong>数据存储</strong><small>会话和消息保存在本地 MySQL 数据库</small></div><span class="local-badge">本机</span></div>
-        <div class="modal-note"><Sparkles :size="16" /> 聊天请求经过本机后端发送到 DeepSeek，密钥不会发送到浏览器。</div>
+
+        <!-- tab 切换 -->
+        <div class="modal-tabs">
+          <button class="modal-tab" :class="{ active: settingsTab === 'workspace' }" @click="settingsTab = 'workspace'">工作区</button>
+          <button class="modal-tab" :class="{ active: settingsTab === 'account' }" @click="settingsTab = 'account'">账号设置</button>
+        </div>
+
+        <!-- 工作区 tab -->
+        <div v-if="settingsTab === 'workspace'" class="modal-tab-body">
+          <div class="setting-item"><div><strong>当前模型</strong><small>通过后端调用国产 DeepSeek 模型</small></div><span class="setting-value">DeepSeek Flash</span></div>
+          <div class="setting-item"><div><strong>数据存储</strong><small>会话和消息保存在本地 MySQL 数据库</small></div><span class="local-badge">本机</span></div>
+          <div class="modal-note"><Sparkles :size="16" /> 聊天请求经过本机后端发送到 DeepSeek，密钥不会发送到浏览器。</div>
+        </div>
+
+        <!-- 账号设置 tab -->
+        <div v-else class="modal-tab-body">
+          <!-- 修改用户名 -->
+          <div class="account-form-block">
+            <strong class="account-block-title">修改用户名</strong>
+            <small class="account-block-desc">修改后需重新登录</small>
+            <div class="account-row">
+              <span class="account-label">当前</span>
+              <span class="account-value">{{ currentUser?.username }}</span>
+            </div>
+            <div class="account-row">
+              <span class="account-label">新用户名</span>
+              <input v-model="editUsername" type="text" maxlength="50" class="account-input" placeholder="2-50 个字符" />
+            </div>
+            <button class="modal-submit" :disabled="!editUsername.trim() || editUsername.trim() === currentUser?.username" @click="submitUsername">更新用户名</button>
+          </div>
+
+          <div class="account-divider"></div>
+
+          <!-- 修改密码 -->
+          <div class="account-form-block">
+            <strong class="account-block-title">修改密码</strong>
+            <small class="account-block-desc">6-12 位，须同时包含字母和数字</small>
+            <div class="account-row">
+              <span class="account-label">旧密码</span>
+              <input v-model="editOldPassword" type="password" class="account-input" placeholder="输入当前密码" />
+            </div>
+            <div class="account-row">
+              <span class="account-label">新密码</span>
+              <input v-model="editNewPassword" type="password" class="account-input" placeholder="6-12 位，字母+数字" />
+            </div>
+            <div class="account-row">
+              <span class="account-label">确认新密码</span>
+              <input v-model="editConfirmPassword" type="password" class="account-input" placeholder="再次输入新密码" />
+            </div>
+            <button class="modal-submit" :disabled="!editOldPassword || !editNewPassword || !editConfirmPassword" @click="submitPassword">更新密码</button>
+          </div>
+        </div>
+
         <button class="modal-done" @click="showSettings = false">完成</button>
       </section>
     </div>

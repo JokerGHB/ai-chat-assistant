@@ -1,7 +1,6 @@
 package com.lrj.end.controller;
 
 import com.lrj.end.config.CurrentUser;
-import com.lrj.end.dto.ResetPasswordResponse;
 import com.lrj.end.dto.UserProfileResponse;
 import com.lrj.end.entity.SysUser;
 import com.lrj.end.service.AdminUserService;
@@ -51,12 +50,4 @@ public class AdminUserController {
         return ResponseEntity.noContent().build();
     }
 
-    /** 重置密码：返回生成的新密码明文（仅此一次展示给管理员） */
-    @PostMapping("/{userId}/reset-password")
-    public ResetPasswordResponse resetPassword(@CurrentUser SysUser admin,
-                                               @PathVariable Long userId,
-                                               HttpServletRequest request) {
-        String newPassword = adminUserService.resetPassword(admin, userId, request.getRemoteAddr());
-        return new ResetPasswordResponse(newPassword);
-    }
 }

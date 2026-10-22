@@ -127,6 +127,29 @@ public class AuthService {
     }
 
     /**
+     * 修改用户名：校验唯一性 → 更新 → 删除全部令牌强制重登。
+     * 强制重登的原因：前端 localStorage 缓存了用户名，服务端令牌校验也可能依赖 username 快照；
+     * 改用户名后旧令牌中的身份信息已过期，必须重新登录刷新。
+     */
+    @Transactional
+    public void changeUsername(Long userId, String newUsername, String ip) {
+        SysUser user = requireUser(userId);
+        String name = newUsername.trim();
+        // 唯一性校验：排除自己（用户名没改时不该报错）
+        userMapper.findByUsername(name).ifPresent(existing -> {
+            if (!existing.getId().equals(userId)) {
+                throw new IllegalArgumentException("用户名已被占用");
+            }
+        });
+        if (name.equals(user.getUsername())) {
+            return; // 没变化，直接返回
+        }
+        userMapper.updateUsername(userId, name);
+        tokenMapper.deleteByUserId(userId);
+        logService.log(user, "CHANGE_USERNAME", null, null, "修改用户名为：" + name, ip);
+    }
+
+    /**
      * 请求级令牌校验（AuthInterceptor 每个受保护请求都会调用）：
      *  1. 令牌不存在 → 401
      *  2. 闲置超时 → 删令牌 + 401

@@ -5,6 +5,7 @@ import com.lrj.end.dto.LoginRequest;
 import com.lrj.end.dto.LoginResponse;
 import com.lrj.end.dto.RegisterRequest;
 import com.lrj.end.dto.UpdatePasswordRequest;
+import com.lrj.end.dto.UpdateUsernameRequest;
 import com.lrj.end.dto.UserProfileResponse;
 import com.lrj.end.entity.SysUser;
 import com.lrj.end.service.AuthService;
@@ -62,6 +63,15 @@ public class AuthController {
                                                @Valid @RequestBody UpdatePasswordRequest request,
                                                HttpServletRequest http) {
         authService.changePassword(user.getId(), request.oldPassword(), request.newPassword(), clientIp(http));
+        return ResponseEntity.noContent().build();
+    }
+
+    /** 修改用户名：唯一性校验，成功后所有设备强制重新登录 */
+    @PatchMapping("/username")
+    public ResponseEntity<Void> changeUsername(@CurrentUser SysUser user,
+                                               @Valid @RequestBody UpdateUsernameRequest request,
+                                               HttpServletRequest http) {
+        authService.changeUsername(user.getId(), request.username(), clientIp(http));
         return ResponseEntity.noContent().build();
     }
 

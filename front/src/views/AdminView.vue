@@ -51,7 +51,8 @@ const messageRoleLabel = (role) => ({ user: '用户', assistant: 'AI 回复', sy
 // 操作日志 action 值 → 中文说明
 const ACTION_LABELS = {
   LOGIN: '登录', REGISTER: '注册', LOGOUT: '登出', CHANGE_PASSWORD: '修改密码',
-  BAN_USER: '封禁用户', UNBAN_USER: '解封用户', RESET_PASSWORD: '重置密码',
+  CHANGE_USERNAME: '修改用户名',
+  BAN_USER: '封禁用户', UNBAN_USER: '解封用户',
   DELETE_SESSION: '删除会话', ADMIN_DELETE_SESSION: '管理员删除会话', PURGE_SESSION: '过期会话清理',
 }
 const actionLabel = (action) => ACTION_LABELS[action] || action
@@ -80,18 +81,6 @@ async function toggleBan(user) {
     await loadUsers()
   } catch (error) {
     showToast(`操作失败：${error.message}`)
-  }
-}
-
-// 重置密码结果弹窗：仅此一次展示后端生成的新密码明文
-const resetResult = ref(null)
-async function resetPassword(user) {
-  if (!window.confirm(`确定重置「${user.username}」的密码？重置后该用户所有登录状态将失效。`)) return
-  try {
-    const result = await api(`/api/admin/users/${user.id}/reset-password`, { method: 'POST' })
-    resetResult.value = { username: user.username, newPassword: result.newPassword }
-  } catch (error) {
-    showToast(`重置失败：${error.message}`)
   }
 }
 
@@ -289,7 +278,7 @@ onBeforeUnmount(() => {
       <!-- ===== 用户管理 ===== -->
       <div v-if="activeTab === 'users'" class="admin-panel">
         <div class="panel-heading">
-          <div><h2>用户管理</h2><p>查看全部账号，可封禁/解封与重置密码</p></div>
+          <div><h2>用户管理</h2><p>查看全部账号，可封禁/解封</p></div>
           <button class="admin-refresh" @click="loadUsers">刷新</button>
         </div>
         <div class="table-wrap">
@@ -306,7 +295,6 @@ onBeforeUnmount(() => {
                 <td class="muted">{{ formatTime(user.createdAt) }}</td>
                 <td class="col-actions">
                   <button class="table-btn" @click="toggleBan(user)">{{ user.status === 'banned' ? '解封' : '封禁' }}</button>
-                  <button class="table-btn" @click="resetPassword(user)">重置密码</button>
                 </td>
               </tr>
               <tr v-if="!users.length && !usersLoading"><td colspan="6" class="empty">暂无用户数据</td></tr>
@@ -429,19 +417,6 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </section>
-
-    <!-- 重置密码结果弹窗（新密码仅此一次展示） -->
-    <div v-if="resetResult" class="admin-modal-backdrop" @click.self="resetResult = null">
-      <section class="admin-modal">
-        <div class="admin-modal-head">
-          <h2>密码已重置</h2>
-          <button class="icon-close" @click="resetResult = null"><X :size="18" /></button>
-        </div>
-        <p class="modal-desc">用户 <strong>{{ resetResult.username }}</strong> 的新密码如下，请立即转告用户（关闭后不再显示）：</p>
-        <div class="password-box">{{ resetResult.newPassword }}</div>
-        <button class="admin-primary-btn" @click="resetResult = null">我已记录</button>
-      </section>
-    </div>
 
     <!-- 会话消息检视弹窗 -->
     <div v-if="inspected" class="admin-modal-backdrop" @click.self="inspected = null">

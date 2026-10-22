@@ -45,4 +45,8 @@ public interface SysUserMapper {
     /** 封禁/解封（第 5 步管理员功能使用） */
     @Update("UPDATE sys_user SET status = #{status} WHERE id = #{id}")
     int updateStatus(@Param("id") Long id, @Param("status") String status);
+
+    /** 修改用户名（用户自助改用户名时使用） */
+    @Update("UPDATE sys_user SET username = #{username} WHERE id = #{id}")
+    int updateUsername(@Param("id") Long id, @Param("username") String username);
 }
