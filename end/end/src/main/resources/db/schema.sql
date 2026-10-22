@@ -1,5 +1,5 @@
 -- Multi-user AI chat schema for MySQL 8.0+
--- 5 tables: sys_user / login_token / chat_session / chat_message / operation_log
+-- 6 tables: sys_user / login_token / chat_session / chat_message / operation_log / chat_question_stat
 CREATE DATABASE IF NOT EXISTS ai_chat_local
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_0900_ai_ci;
@@ -90,9 +90,30 @@ CREATE TABLE IF NOT EXISTS operation_log (
     KEY idx_log_user (user_id, created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- ========== 6. 高频提问统计（预聚合表：每来一条提问就 +1，看板"全部"口径直接查本表） ==========
+CREATE TABLE IF NOT EXISTS chat_question_stat (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    question_md5 CHAR(32) NOT NULL COMMENT '归一化问题文本（trim+转小写）的 MD5 指纹，作为去重键',
+    question VARCHAR(500) NOT NULL COMMENT '问题样例文本（保留最新一条，便于展示）',
+    user_id BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '归属用户ID；0=全局统计，非0=按用户统计（预留）',
+    ask_count BIGINT UNSIGNED NOT NULL DEFAULT 1 COMMENT '该问题累计提问次数（预聚合计数）',
+    last_asked_at DATETIME(3) NOT NULL COMMENT '最近一次提问时间',
+    created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_question_stat (user_id, question_md5),
+    KEY idx_question_stat_top (ask_count)
+    -- 注意：user_id=0 是"全局"哨兵值，不指向 sys_user，因此本表不建外键
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 -- 说明：
 -- 1. 初始管理员账号由后端启动时自动创建（见 auth 模块初始化器），
 --    用户名 admin，初始密码从环境变量 ADMIN_INITIAL_PASSWORD 读取（默认 Admin@123），
 --    首次登录后请立即修改。
 -- 2. 大模型配置（模型名/地址/token 单价）固定在 application.properties，不再使用 ai_model_config 表。
 -- 3. 旧库数据无 user_id 无法归属，本次升级直接 drop 旧库后执行本脚本重建。
+-- 4. chat_question_stat 是累计口径：会话物理删除（管理员删除/90天清理）后计数不回退，
+--    因此"全部"高频提问与实时查询存在微小偏差（问过即计入），属预期行为。
+-- 5. chat_question_stat 不回填历史数据，统计从功能启用点开始累计。
+--    原因：回填需在 SQL 内计算 MD5 指纹，而本机 MySQL 26.7 已移除 MD5() 函数（ERROR 1305），
+--    应用侧（Java DigestUtils）不受影响；如确需回填须写 Java 一次性任务，本项目未做。

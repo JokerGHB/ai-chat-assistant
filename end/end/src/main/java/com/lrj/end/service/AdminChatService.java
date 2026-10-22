@@ -9,6 +9,7 @@ import com.lrj.end.entity.ChatSession;
 import com.lrj.end.entity.SysUser;
 import com.lrj.end.exception.ResourceNotFoundException;
 import com.lrj.end.mapper.ChatMessageMapper;
+import com.lrj.end.mapper.ChatQuestionStatMapper;
 import com.lrj.end.mapper.ChatSessionMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,18 +20,22 @@ import java.util.List;
 /**
  * 管理员对话管理与统计看板。
  * 统计指标全部从 chat_message 聚合，时间范围 range=7d|30d|all 换算成 from 时间点。
+ * 例外：高频提问"全部"口径走 chat_question_stat 预聚合表（累计计数），7d/30d 仍实时聚合。
  */
 @Service
 public class AdminChatService {
     private final ChatSessionMapper sessionMapper;
     private final ChatMessageMapper messageMapper;
+    private final ChatQuestionStatMapper questionStatMapper;
     private final OperationLogService logService;
 
     public AdminChatService(ChatSessionMapper sessionMapper,
                             ChatMessageMapper messageMapper,
+                            ChatQuestionStatMapper questionStatMapper,
                             OperationLogService logService) {
         this.sessionMapper = sessionMapper;
         this.messageMapper = messageMapper;
+        this.questionStatMapper = questionStatMapper;
         this.logService = logService;
     }
 
@@ -66,9 +71,16 @@ public class AdminChatService {
                 messageMapper.countUnresolved(from));
     }
 
-    /** 高频提问 Top N */
+    /**
+     * 高频提问 Top N（混合口径）：
+     *  - 全部：查 chat_question_stat 预聚合表（每次提问 +1 的累计值），毫秒级，不做全表 GROUP BY；
+     *  - 7d/30d：计数器没有时间维度，无法从累计值拆出窗口内次数，仍实时聚合 chat_message。
+     */
     @Transactional(readOnly = true)
     public List<TopQuestionView> topQuestions(String range, int limit) {
+        if (range == null || range.isBlank() || "all".equals(range)) {
+            return questionStatMapper.findTopGlobal(limit);
+        }
         return messageMapper.findTopQuestions(resolveFrom(range), limit);
     }
 
