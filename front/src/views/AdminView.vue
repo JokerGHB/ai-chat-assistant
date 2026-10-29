@@ -164,7 +164,11 @@ async function loadStats() {
 /** 渲染高频提问横向柱状图（横向更利于阅读中文长句） */
 function renderChart() {
   if (!chartRef.value) return
-  if (!chartInstance) chartInstance = echarts.init(chartRef.value)
+  // tab 切换会销毁并重建图表容器，实例若绑在已卸载的旧节点上必须重建，否则图表渲染进游离节点导致空白
+  if (!chartInstance || chartInstance.getDom() !== chartRef.value) {
+    chartInstance?.dispose()
+    chartInstance = echarts.init(chartRef.value)
+  }
   // echarts 类目轴自下而上排列，反转后 Top1 显示在最上方
   const data = [...topQuestions.value].reverse()
   chartInstance.setOption({
@@ -224,6 +228,8 @@ function ensureTabLoaded(tab) {
 }
 
 watch(activeTab, (tab) => ensureTabLoaded(tab))
+// 切换时间范围时重新拉取统计数据
+watch(range, () => { if (activeTab.value === 'stats') loadStats() })
 
 async function logout() {
   try {
