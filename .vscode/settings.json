@@ -1,0 +1,8 @@
+{
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.test.config": {
+        "env": {
+            "DB_PASSWORD": "localdev"
+        }
+    }
+}
