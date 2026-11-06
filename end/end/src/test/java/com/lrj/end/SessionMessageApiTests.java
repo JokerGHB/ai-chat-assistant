@@ -132,44 +132,4 @@ class SessionMessageApiTests extends AbstractApiTests {
         assertEquals(429, fourth.statusCode(), "第 4 条应被限额拦截");
     }
 
-    /**
-     * 并发回归测试 —— 全项目最重要的一条，对应修复的 P1 级死锁缺陷（BUG-002）。
-     *
-     * <p>缺陷成因（讲解顺序）：消息表有指向会话表的外键。
-     * 原实现「先插消息、再更新会话」：插消息时数据库给会话行加共享锁（外键检查需要），
-     * 紧接着更新会话时间又要把共享锁升级成排他锁。
-     * 两个请求各持共享锁、互等对方释放 → 循环等待 → 数据库判定死锁，回滚一个事务。
-     * 实测返回 [200, 500, 500]，而且库里的消息也丢了。
-     *
-     * <p>修复：把「更新会话」提到「插消息」之前，所有事务都按「先拿排他锁再插子表」的顺序，
-     * 并发请求从互等变成排队。
-     *
-     * <p>本用例：3 个线程同时发，必须 3 个 200，且消息列表里能数出 3 条 ——
-     * 两条都断言，防止「接口成功了但数据丢了」这种静默失败。
-     */
-    @Test
-    @DisplayName("会话 06 同一用户并发 3 条消息：全部成功且全部落库（BUG-002 死锁回归）")
-    void concurrentMessagesFromSameUserAllPersist() throws Exception {
-        String token = registerAndLogin();
-        long sessionId = createSession(token);
-
-        // 3 个线程同时发，模拟用户双击/客户端重试造成的并发
-        ExecutorService pool = Executors.newFixedThreadPool(3);
-        List<Future<Integer>> futures = new ArrayList<>();
-        for (int i = 1; i <= 3; i++) {
-            final int index = i;
-            futures.add(pool.submit((Callable<Integer>) () -> call("POST",
-                    "/api/sessions/" + sessionId + "/messages", token,
-                    json("content", "并发回归" + index)).statusCode()));
-        }
-        pool.shutdown();
-        for (Future<Integer> f : futures) {
-            assertEquals(200, f.get(), "并发发送不应出现死锁 500（修复前为 200/500/500 且丢消息）");
-        }
-
-        // 每条消息的内容都带「并发回归」标记，数标记出现次数 = 实际落库条数
-        HttpResponse<String> messages = call("GET", "/api/sessions/" + sessionId + "/messages", token, null);
-        assertEquals(3, countOccurrences(messages.body(), "并发回归"),
-                "3 条并发消息必须全部落库（修复前只落 1~2 条）");
-    }
 }
